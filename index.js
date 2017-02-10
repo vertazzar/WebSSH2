@@ -76,7 +76,7 @@ io.on('connection', function(socket) {
         socket.emit('status', 'SSH CONNECTION ESTABLISHED');
         socket.emit('statusBackground', 'green');
         socket.emit('allowreplay', config.options.allowreplay)
-        conn.shell(function(err, stream) {
+        conn.exec("TERM=xterm " + 'top', {pty: true}, function(err, stream) {
             if (err) { 
                 console.log (err.message);
                 myError = myError + err.message
@@ -121,11 +121,11 @@ io.on('connection', function(socket) {
         port: config.ssh.port,
         username: config.user.name,
         password: config.user.password,
-        tryKeyboard: true,
+        tryKeyboard: true//,
 // some cisco routers need the these cipher strings
-        algorithms: {
-            'cipher': ['aes128-cbc', '3des-cbc', 'aes256-cbc'],
-            'hmac': ['hmac-sha1', 'hmac-sha1-96', 'hmac-md5-96']
-        }
+//        algorithms: {
+//            'cipher': ['aes128-cbc', '3des-cbc', 'aes256-cbc'],
+//            'hmac': ['hmac-sha1', 'hmac-sha1-96', 'hmac-md5-96']
+//        }
     });
 });
