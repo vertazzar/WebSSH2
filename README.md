@@ -1,3 +1,5 @@
+#DO NOT USE - POC only
+
 # WebSSH2
 Web SSH Client using ssh2, socket.io, xterm.js, and express
 
