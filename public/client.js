@@ -33,20 +33,26 @@ socket.emit('create', term.cols, term.rows, function(err, data) {
     termid = self.id;
     term.emit('open tab', self);
 });
+
+function authorize() {
+    socket.emit('authorize', JSON.stringify(AUTHORIZATION));
+}
+var errors = 0;
 socket.on('connect', function() {
     term.on('data', function(data) {
         socket.emit('data', data);
     });
+    authorize();
     socket.on('title', function(data) {
         document.title = data;
     }).on('status', function(data) {
-        document.getElementById('status').innerHTML = data;
+        document.getElementById('status').innerText = data;
     }).on('headerBackground', function(data) {
         document.getElementById('header').style.backgroundColor = data;
     }).on('header', function(data) {
-        document.getElementById('header').innerHTML = data;
+        document.getElementById('header').innerText = data;
     }).on('footer', function(data) {
-        document.getElementById('footer').innerHTML = data;
+        document.getElementById('footer').innerText = data;
     }).on('statusBackground', function(data) {
         document.getElementById('status').style.backgroundColor = data;
     }).on('allowreplay', function(data) {
@@ -62,10 +68,18 @@ socket.on('connect', function() {
         term.write(data);
     }).on('disconnect', function() {
         document.getElementById('status').style.backgroundColor = 'red';
-        document.getElementById('status').innerHTML = 'WEBSOCKET SERVER DISCONNECTED';
-        socket.io.reconnection(false);
+        document.getElementById('status').innerText = 'WEBSOCKET SERVER DISCONNECTED (will retry)';
+        //socket.io.reconnection(false);
     }).on('error', function(err) {
         document.getElementById('status').style.backgroundColor = 'red';
-        document.getElementById('status').innerHTML = 'ERROR ' + err;
+        document.getElementById('status').innerText = 'ERROR ' + err + ' will retry after 5 seconds';
+        errors += 1;
+        if (errors > 20) {
+            document.getElementById('status').innerText = 'ERROR ' + err + ' - failed retrying after 20 times.';
+            return;
+        }
+        setTimeout(function () {
+            authorize();
+        }, 4000);
     });
 });

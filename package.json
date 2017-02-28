@@ -24,10 +24,11 @@
     "node": "0.12.7"
   },
   "bugs": {
-    "url" : "https://github.com/billchurch/WebSSH2/issues"
+    "url": "https://github.com/billchurch/WebSSH2/issues"
   },
   "dependencies": {
     "basic-auth": "^1.1.0",
+    "body-parser": "^1.16.1",
     "cookie-parser": "^1.4.3",
     "express": "^4.14.1",
     "read-config": "^1.6.0",
