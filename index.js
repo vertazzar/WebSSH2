@@ -6,9 +6,9 @@
 
 var express = require('express');
 var app = express();
-var cookieParser = require('cookie-parser')
-var server = require('http').Server(app);
-var io = require('socket.io')(server);
+var cookieParser = require('cookie-parser');
+var http = require('http');
+var https = require('https');
 var path = require('path');
 var fs = require('fs');
 var basicAuth = require('basic-auth');
@@ -18,12 +18,20 @@ var readConfig = require('read-config'),
 var myError = " - ";
 var bodyParser = require('body-parser');
 
+
 function logErrors(err, req, res, next) {
     console.error(err.stack);
     next(err);
 }
-
-var authorizations = {};
+var server;
+if (config.ssl.key) {
+    var privateKey = fs.readFileSync(config.ssl.key, 'utf8');
+    var certificate = fs.readFileSync(config.ssl.crt, 'utf8');
+    server = https.createServer({ key: privateKey, cert: certificate }, app);
+} else {
+    server = http.createServer(app);
+}
+var io = require('socket.io')(server);
 
 server.listen({
     host: config.listen.ip,
