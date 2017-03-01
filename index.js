@@ -67,7 +67,7 @@ server.listen({
 
 var html = fs.readFileSync(path.join(__dirname + '/public/client.html')).toString();
 
-app.use(bodyParser.urlencoded({ extended: true })).use(express.static(__dirname + '/public')).use(cookieParser()).post('/ssh/host/:host?', function(req, res) {
+app.use(bodyParser.urlencoded({ extended: true })).use(express.static(__dirname + '/public')).use(cookieParser()).post('/ssh', function(req, res) {
     var auth = {
         ssh: {
             port: config.ssh.port
@@ -81,7 +81,7 @@ app.use(bodyParser.urlencoded({ extended: true })).use(express.static(__dirname 
         },
         user: {}
     };
-    auth.ssh.host = req.params.host;
+    auth.ssh.host = req.body.host;
     auth.user.name = req.body.username;
     auth.user.password = req.body.password;
     if (typeof req.body.port !== 'undefined' && req.body.port !== null) { auth.ssh.port = req.body.port; }
