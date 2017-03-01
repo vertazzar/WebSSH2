@@ -39,7 +39,7 @@ server.listen({
 }).on('error', function(err) {
     if (err.code === 'EADDRINUSE') {
         config.listen.port++;
-        console.log('Address in use, retrying on port ' + config.listen.port);
+        console.log('Address in use, tretrying on port ' + config.listen.port);
         setTimeout(function() {
             server.listen(config.listen.port);
         }, 250);
@@ -96,13 +96,24 @@ app.use(bodyParser.urlencoded({ extended: true })).use(express.static(__dirname 
 }).use('/style', express.static(__dirname + '/public')).use('/src', express.static(__dirname + '/node_modules/xterm/dist')).use('/addons', express.static(__dirname + '/node_modules/xterm/dist/addons'));
 
 io.on('connection', function(socket) {
+    socket.on('disconnect', function() {
+      console.log('Got disconnect!');
+      if (socket.conn) {
+        conn.end();
+      }
+   });
     socket.on('authorize', function(data) {
 
         console.log('authorize', data);
 
+        if (socket.conn) {
+            socket.conn.end();
+        }
+
         var auth = JSON.parse(data);
 
         var conn = new ssh();
+        socket.conn = conn;
         conn.on('banner', function(d) {
             //need to convert to cr/lf for proper formatting
             d = d.replace(/\r?\n/g, "\r\n");
