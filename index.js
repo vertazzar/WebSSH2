@@ -98,22 +98,22 @@ app.use(bodyParser.urlencoded({ extended: true })).use(express.static(__dirname 
 io.on('connection', function(socket) {
     socket.on('disconnect', function() {
       console.log('Got disconnect!');
-      if (socket.conn) {
-        conn.end();
+      if (socket.ssh) {
+        socket.ssh.end();
       }
    });
     socket.on('authorize', function(data) {
 
         console.log('authorize', data);
 
-        if (socket.conn) {
-            socket.conn.end();
+        if (socket.ssh) {
+            socket.ssh.end();
         }
 
         var auth = JSON.parse(data);
 
         var conn = new ssh();
-        socket.conn = conn;
+        socket.ssh = conn;
         conn.on('banner', function(d) {
             //need to convert to cr/lf for proper formatting
             d = d.replace(/\r?\n/g, "\r\n");
