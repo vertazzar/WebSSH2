@@ -38,10 +38,15 @@ function authorize() {
     socket.emit('authorize', JSON.stringify(AUTHORIZATION));
 }
 var errors = 0;
+var listens = false;
 socket.on('connect', function() {
-    term.on('data', function(data) {
-        socket.emit('data', data);
-    });
+    if (!listens) {
+        term.on('data', function(data) {
+            socket.emit('data', data);
+        });
+
+        listens = true;
+    }
     authorize();
     socket.on('title', function(data) {
         document.title = data;
